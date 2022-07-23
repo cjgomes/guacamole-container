@@ -22,7 +22,7 @@ function Error() {
         exit 1
 }
 
-function InstallUbuntuBased() {
+function InstallUbuntuAptBased() {
     echo -e "Install dependencies for Ubuntu based apt distro"
     apt update
     echo -e "Checking if jq is already installed"
@@ -50,7 +50,7 @@ function InstallUbuntuBased() {
         echo -e "wget is already installed"
     fi
     echo -e "Checking if gnupg2 is already installed"
-    dpkg -l gnupg2 &> /dev/null
+    dpkg -s gnupg2 &> /dev/null
     if $? -eq 1; then
         echo -n "Installing gnupg2..."
         apt install -qq gnupg2 < /dev/null >/dev/null && Done || Fail
@@ -59,7 +59,7 @@ function InstallUbuntuBased() {
     fi
 
     echo -e "Checking if podman is already installed"
-    dpkg -l podman &>/dev/null
+    dpkg -s podman &>/dev/null
     if $? -eq 1; then
         echo "Installing podman repo"
         source /etc/os-release
@@ -77,4 +77,34 @@ function InstallUbuntuBased() {
     fi
 
 }
+
+function InstallCentosRpmBased() {
+    echo -e "Checking if jq is already installed"
+    rpm -q jq &>/dev/null
+    if $? -eq 1; then
+        echo -n "installing jq..."
+        yum install -q jq && Done || Fail
+    else
+        echo -e "jq is already installed"
+    fi
+
+    echo -e "Checking if curl is already installed"
+    rpm -q curl &>/dev/null
+    if $? -eq 1; then
+        echo -n "installing curl..."
+        yum install -q curl && Done || Fail
+    else
+        echo -e "curl is already installed"
+    fi
+
+    echo -e "Checking if podman is already installed"
+    rpm -q podman &>/dev/null
+    if $? -eq 1; then
+        echo -n "installing podman..."
+        yum install -q podman && Done || Fail
+    else
+        echo -e "podman is already installed"
+    fi
+}
+
 
