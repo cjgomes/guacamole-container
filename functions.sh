@@ -80,7 +80,7 @@ function InstallUbuntuAptBased() {
 
 function InstallCentosRpmBased() {
     echo -e "Checking if jq is already installed"
-    rpm -q jq &>/dev/null
+    dnf list --installed jq &>/dev/null
     if $? -eq 1; then
         echo -n "installing jq..."
         yum install -q jq && Done || Fail
@@ -89,7 +89,7 @@ function InstallCentosRpmBased() {
     fi
 
     echo -e "Checking if curl is already installed"
-    rpm -q curl &>/dev/null
+    dnf list --installed curl &>/dev/null
     if $? -eq 1; then
         echo -n "installing curl..."
         yum install -q curl && Done || Fail
@@ -98,13 +98,17 @@ function InstallCentosRpmBased() {
     fi
 
     echo -e "Checking if podman is already installed"
-    rpm -q podman &>/dev/null
+    dnf list --installed podman &>/dev/null
     if $? -eq 1; then
-        echo -n "installing podman..."
-        yum install -q podman && Done || Fail
+        echo -e "Checking if podman is available to install"
+        if dnf list --available podman &> /dev/null ;then
+            echo -n "installing podman..."
+            yum install -q podman && Done || Fail
+        else
+            echo "Podman is not available, maybe you should enable epel repo to install..."
+        fi
     else
         echo -e "podman is already installed"
     fi
 }
-
 
